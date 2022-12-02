@@ -1,0 +1,23 @@
+{
+    "name": "vasilenkovi/yeticave",
+    "description": "Website Online auction",
+    "type": "project",
+    "license": "MIT",
+    "config": {
+        "platform-check": false
+    },
+    "autoload": {
+        "psr-4": {
+            "Vasilenkovi\\Yeticave\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "SimpleVV",
+            "email": "simpleHelpD@yandex.ru"
+        }
+    ],
+    "require": {
+        "swiftmailer/swiftmailer": "^6.0"
+    }
+}
