@@ -4,6 +4,10 @@ $lot_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $errors = [];
 $bet = [];
 $lot_price_data = [];
+$lot_price = [];
+$remain_time = [];
+$price = '';
+$min_bet = '';
 
 if ($lot_id) {
     $lot_price_data = get_lot_price($link, $lot_id);

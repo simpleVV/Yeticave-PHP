@@ -5,6 +5,7 @@ require_once('helpers.php');
 require_once('models.php');
 
 $categories = get_categories($link);
+$fin_bets = [];
 
 $navigation = include_template('navigation.php', [
     'categories' => $categories

@@ -4,7 +4,7 @@
     <?= $user_name ?>
 </p>
 <p>
-    Ваша ставка для лота <a href="http://yeticave.local/lot.php?id=<?= $id ?>"><?= $title ?></a> победила.
+    Ваша ставка для лота <a href="http://yeticave.local/lot.php?id=<?= $id ?>"><?= htmlspecialchars($title) ?></a> победила.
 </p>
 <p>
     Перейдите по ссылке <a href="http://yeticave.local/bets.php">мои ставки</a>, чтобы связаться с автором

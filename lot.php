@@ -8,6 +8,7 @@ $lot_id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $categories = get_categories($link);
 $lot_data = [];
 $is_state_on = true;
+$final_lot_bets = [];
 
 $navigation = include_template('navigation.php', [
     'categories' => $categories
@@ -59,7 +60,7 @@ $main_content = $error_content
     ]);
 
 $layout_content = include_template('layout.php', [
-    'title' => $lot ? $lot['title'] : '404',
+    'title' => isset($lot['title']) ? $lot['title'] : '404',
     'content' => $main_content,
     'navigation' => $navigation,
     'is_auth' => $is_auth,

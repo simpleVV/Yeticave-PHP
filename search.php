@@ -9,6 +9,8 @@ $categories = get_categories($link);
 $search = empty($_GET['search']) ? '' : htmlspecialchars(trim($_GET['search']));
 $option = $search ?? '';
 $final_lots = [];
+$lots_number = '';
+$pagination_data = [];
 
 if ($search) {
     $lots_number = get_search_lot_num($link, $search);

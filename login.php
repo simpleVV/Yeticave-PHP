@@ -6,6 +6,7 @@ require_once('models.php');
 
 $categories = get_categories($link);
 $errors = [];
+$enter_form = [];
 
 $navigation = include_template('navigation.php', [
     'categories' => $categories
@@ -55,12 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($errors)) {
         header('Location: /index.php');
     }
-
-    $main_content = include_template('login-page.php', [
-        'navigation' => $navigation,
-        'errors' => $errors,
-        'form' => $enter_form
-    ]);
 }
 
 if ($is_auth) {
@@ -70,7 +65,8 @@ if ($is_auth) {
 
 $main_content = include_template('login-page.php', [
     'navigation' => $navigation,
-    'errors' => $errors
+    'errors' => $errors,
+    'form' => $enter_form
 ]);
 
 $layout_content = include_template('layout.php', [

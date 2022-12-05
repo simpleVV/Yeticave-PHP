@@ -4,7 +4,7 @@ require_once('init.php');
 require_once('models.php');
 
 //Отправить победителю на email письмо — поздравление с победой.
-// require_once('getwinner.php');
+require_once('getwinner.php');
 
 $categories = get_categories($link);
 $lots = get_lots($link, MAIN_PAGE_ITEMS);

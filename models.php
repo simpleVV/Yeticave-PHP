@@ -12,7 +12,11 @@ function get_categories(object $connect)
     $sql = "SELECT category_name as name, character_code as code,
                    category.id as id
               FROM category";
-    $sql_result = mysqli_query($connect, $sql);
+    $stmt = db_get_prepare_stmt($connect, $sql);
+
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
     $categories = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
     return $categories;
@@ -33,8 +37,12 @@ function get_lots(object $connect, int $lots_number)
                    JOIN category ON lots.category_id = category.id
                   WHERE date_end > now()
                ORDER BY date_creation DESC
-                  LIMIT $lots_number";
-    $sql_result = mysqli_query($connect, $sql_lots);
+                  LIMIT ?";
+    $stmt = db_get_prepare_stmt($connect, $sql_lots, [$lots_number]);
+
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
     $lots = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
     return $lots;
@@ -53,8 +61,12 @@ function get_lot(object $connect, string $id)
                        category_name AS category, bet_step, user_id
                   FROM lots
                   JOIN category ON lots.category_id = category.id
-                 WHERE lots.id = $id";
-    $sql_result = mysqli_query($connect, $sql_lot);
+                 WHERE lots.id = ?";
+    $stmt = db_get_prepare_stmt($connect, $sql_lot, [$id]);
+
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
     $lot_data = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
     return $lot_data;
@@ -84,7 +96,6 @@ function find_lots(
                           AND date_end > now()
                  ORDER BY date_creation DESC
                     LIMIT ? OFFSET ?";
-
     $stmt = db_get_prepare_stmt($connect, $sql_search, $sql_data);
 
     mysqli_stmt_execute($stmt);
@@ -138,10 +149,9 @@ function filter_lots(
  */
 function get_search_lot_num(object $connect, string $search_option)
 {
-    $sql_data = [$search_option];
     $sql = "SELECT COUNT(*) as count FROM lots
              WHERE MATCH(title, description) AGAINST(?)";
-    $stmt = db_get_prepare_stmt($connect, $sql, $sql_data);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$search_option]);
 
     mysqli_stmt_execute($stmt);
 
@@ -160,11 +170,10 @@ function get_search_lot_num(object $connect, string $search_option)
  */
 function get_filter_lot_num(object $connect, string $filter)
 {
-    $sql_data = [$filter];
     $sql = "SELECT COUNT(*) as count FROM lots
               JOIN category ON lots.category_id = category.id
              WHERE category_name = ? ";
-    $stmt = db_get_prepare_stmt($connect, $sql, $sql_data);
+    $stmt = db_get_prepare_stmt($connect, $sql, [$filter]);
 
     mysqli_stmt_execute($stmt);
 
@@ -186,9 +195,13 @@ function get_lot_bets(object $connect, string $lot_id)
     $sql_bets = "SELECT bet_date as time, price, user_name
                    FROM bets
                    JOIN users ON bets.user_id = users.id
-                  WHERE lot_id = $lot_id
+                  WHERE lot_id = ?
                ORDER BY bet_date DESC";
-    $sql_result = mysqli_query($connect, $sql_bets);
+    $stmt = db_get_prepare_stmt($connect, $sql_bets, [$lot_id]);
+
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
     $bets = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
     return $bets;
@@ -207,8 +220,12 @@ function get_lot_price(object $connect, string $lot_id)
     $sql_lot = "SELECT start_price AS price, date_end AS duration_time,
                        bet_step, start_price + bet_step AS start_bet, user_id
                   FROM lots
-                 WHERE lots.id = $lot_id";
-    $sql_result = mysqli_query($connect, $sql_lot);
+                 WHERE lots.id = ?";
+    $stmt = db_get_prepare_stmt($connect, $sql_lot, [$lot_id]);
+
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
     $lot_price = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
     return $lot_price;
@@ -326,11 +343,14 @@ function get_user_bets(object $connect, string $user_id)
                    JOIN users ON bets.user_id = users.id
                    JOIN lots ON bets.lot_id = lots.id
                    JOIN category ON lots.category_id = category.id
-                  WHERE bets.user_id = $user_id
+                  WHERE bets.user_id = ?
                GROUP BY lot_id
                ORDER BY time DESC;";
+    $stmt = db_get_prepare_stmt($connect, $sql_bets, [$user_id]);
 
-    $sql_result = mysqli_query($connect, $sql_bets);
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
     $bets = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
     return $bets;
@@ -347,8 +367,12 @@ function get_last_bet_price(object $connect, string $lot_id)
 {
     $sql_bet_price = "SELECT MAX(price) as max_price
                         FROM bets
-                       WHERE lot_id = $lot_id";
-    $sql_result = mysqli_query($connect, $sql_bet_price);
+                       WHERE lot_id = ?";
+    $stmt = db_get_prepare_stmt($connect, $sql_bet_price, [$lot_id]);
+
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
     [$bet] = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);
 
     return $bet['max_price'];
@@ -364,9 +388,11 @@ function get_last_bet_price(object $connect, string $lot_id)
  */
 function update_lot_winner(object $connect, string $lot_id, string $user_id)
 {
-    $sql_lot = "UPDATE lots SET winner_id = $user_id
-                 WHERE lots.id = $lot_id";
-    $sql_result = mysqli_query($connect, $sql_lot);
+    $sql_data = [$user_id, $lot_id];
+    $sql_lot = "UPDATE lots SET winner_id = ?
+                 WHERE lots.id = ?";
+    $stmt = db_get_prepare_stmt($connect, $sql_lot, $sql_data);
+    $sql_result = mysqli_stmt_execute($stmt);;
 
     return $sql_result;
 }
@@ -384,7 +410,12 @@ function get_winners(object $connect)
                   JOIN users ON lots.winner_id = users.id
                  WHERE user_id != winner_id  AND date_end <= now()";
 
-    $sql_result = mysqli_query($connect, $sql_win);
+
+    $stmt = db_get_prepare_stmt($connect, $sql_win);
+
+    mysqli_stmt_execute($stmt);
+
+    $sql_result = mysqli_stmt_get_result($stmt);
 
     if ($sql_result && mysqli_num_rows($sql_result)) {
         $winners = mysqli_fetch_all($sql_result, MYSQLI_ASSOC);

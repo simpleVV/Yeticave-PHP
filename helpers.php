@@ -341,7 +341,7 @@ function format_data(array $data)
  */
 function is_hour_left(array $time)
 {
-    return (int)$time[0] == 0
+    return (int)$time[0] === 0
         ? false
         : true;
 }
@@ -354,7 +354,7 @@ function is_hour_left(array $time)
  */
 function is_time_up(array $time)
 {
-    return (int)$time[0] == 0 && (int)$time[1] == 0
+    return (int)$time[0] === 0 && (int)$time[1] === 0
         ? true
         : false;
 }

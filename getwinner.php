@@ -14,21 +14,25 @@ $winners = get_winners($link);
 
 if (!empty($winners)) {
     foreach ($winners as $winner) {
+        $id = isset($winner['id']) ? $winner['id'] : '';
+        $name = isset($winner['name']) ? $winner['name'] : '';
+        $title = isset($winner['title']) ? $winner['title'] : '';
+
         $message = new Swift_Message();
         $message->setSubject("Ваша ставка победила");
         $message->setFrom(['keks@phpdemo.ru' => 'Yeticave']);
         $message->setTo($winner['email']);
         $msg_content = include_template('email.php', [
-            'id' => $winner['id'],
-            'user_name' => $winner['name'],
-            'title' => $winner['title']
+            'id' => $id,
+            'user_name' => $name,
+            'title' => $title,
         ]);
         $message->setBody($msg_content, contentType: 'text/html');
 
         $result = $mailer->send($message);
 
         if (!$result) {
-            $user_name = $winner['name'];
+            $user_name = $name;
             $error_content = include_template('error.php', ['error' => "Не удалось отправить письмо пользователю $user_name"]);
         }
     }

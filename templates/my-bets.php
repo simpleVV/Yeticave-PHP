@@ -29,11 +29,11 @@
 
                         <?php if ($rate_class == $rates_win) : ?>
                             <div>
-                                <h3 class="rates__title"><a href="lot.php?id=<?= $bet['lot_id'] ?>"><?= $bet['title'] ?></a></h3>
-                                <p><?= $bet['contacts'] ?></p>
+                                <h3 class="rates__title"><a href="lot.php?id=<?= $bet['lot_id'] ?>"><?= htmlspecialchars($bet['title']) ?></a></h3>
+                                <p><?= htmlspecialchars($bet['contacts']) ?></p>
                             </div>
                         <?php else : ?>
-                            <h3 class="rates__title"><a href="lot.php?id=<?= $bet['lot_id'] ?>"><?= $bet['title'] ?></a></h3>
+                            <h3 class="rates__title"><a href="lot.php?id=<?= $bet['lot_id'] ?>"><?= htmlspecialchars($bet['title']) ?></a></h3>
                         <?php endif; ?>
 
                     </td>
@@ -75,10 +75,10 @@
                         </div>
                     </td>
                     <td class="rates__price">
-                        <?= $bet['price'] ?> р
+                        <?= htmlspecialchars($bet['price']) ?> р
                     </td>
                     <td class="rates__time">
-                        <?= $bet['time'] ?>
+                        <?= htmlspecialchars($bet['time']) ?>
                     </td>
                 </tr>
 
